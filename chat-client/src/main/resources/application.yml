@@ -1,0 +1,6 @@
+service:
+  port: 8010
+  host: localhost
+#客户端心跳包发送间隔，一般设置成小于服务端空闲检查间隔的一半，比如1/3
+heartbeat:
+  interval: 50

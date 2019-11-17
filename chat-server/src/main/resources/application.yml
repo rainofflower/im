@@ -1,0 +1,42 @@
+service:
+  host: 192.168.43.117
+  port: 8010
+  netty:
+    boss-threads: 1
+    worker-threads: 24
+  #服务端心跳 空闲检查间隔
+  heartbeat:
+    read-idle-gap: 150
+  register:
+    rootPath: /distributed-im
+    prefix: id-
+
+cluster:
+  client:
+    threads: 24
+
+#zookeeper集群节点地址
+#注意Curator客户端不会通过一个节点去发现集群中的其它节点，当配置的节点宕机后不会尝试去连接其它节点，所以保证可用性可以多配置几个节点
+zookeeper:
+  connectString: 192.168.43.151:2181,192.168.43.152:2181,192.168.43.153:2181
+
+spring:
+  redis:
+    cluster:
+      # 3主 3从 伪集群
+      nodes: 192.168.43.151:7001,192.168.43.151:7002,192.168.43.151:7003,192.168.43.151:7004,192.168.43.151:7005,192.168.43.151:7006
+      timeout: 1000
+      max-redirects: 3
+    database: 0
+    password: 888888
+    encode: utf-8
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+#    timeout: 15000  #lettuce默认的超时时间为60s,源码见LettuceClientConfigurationBuilder
+
+logging:
+  config: classpath:logback-spring.xml
