@@ -3,7 +3,6 @@ package com.yanghui.im.config;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
@@ -14,7 +13,6 @@ import java.nio.charset.Charset;
  */
 public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
     private Class<T> clazz;
 
@@ -42,9 +40,5 @@ public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
         }
         String str = new String(bytes, DEFAULT_CHARSET);
         return JSON.parseObject(str, clazz);
-    }
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
     }
 }
