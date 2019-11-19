@@ -5,13 +5,15 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * 服务器Socket Session会话
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class LocalSession extends AbstractSession{
 
@@ -23,9 +25,6 @@ public class LocalSession extends AbstractSession{
 
     //用户
     private User user;
-
-    //登录状态
-    private boolean isLogin = false;
 
     private Channel channel;
 

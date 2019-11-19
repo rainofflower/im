@@ -2,12 +2,14 @@ package com.yanghui.im.server;
 
 import com.yanghui.im.distributed.ServiceRouter;
 import io.netty.util.concurrent.Future;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 分布式session
  */
-@Data
+@Getter
+@Setter
 public class DistributedSession extends AbstractSession{
 
     private long nodeId;

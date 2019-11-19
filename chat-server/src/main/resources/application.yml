@@ -1,5 +1,5 @@
 service:
-  host: 192.168.43.151
+  host: 192.168.43.117
   port: 8010
   register:
     rootPath: /distributed-im
@@ -7,16 +7,22 @@ service:
   netty:
     boss-threads: 1
     worker-threads: 24
-  #服务端心跳 空闲检查间隔, 单位 秒
   heartbeat:
+    #服务端心跳 空闲检查间隔, 单位 秒
     read-idle-gap: 150
-  #session超时时间，单位 分钟
   session:
+    #session超时时间，单位 分钟
     timeout: 2
 
 cluster:
   client:
     threads: 24
+    retry:
+      #集群节点连接失败重试次数
+      maxCount: 3
+    heartbeat:
+      #集群节点间心跳包发送间隔，单位 秒，一般设置成小于服务端空闲检查间隔的一半，比如1/3
+      interval: 50
 
 #zookeeper集群节点地址
 #注意Curator客户端不会通过一个节点去发现集群中的其它节点，当配置的节点宕机后不会尝试去连接其它节点，所以保证可用性可以多配置几个节点

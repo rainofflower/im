@@ -1,5 +1,6 @@
 package com.yanghui.im;
 
+import com.yanghui.im.distributed.Node;
 import com.yanghui.im.distributed.ServiceRouter;
 import com.yanghui.im.server.ChatServer;
 import io.netty.channel.ChannelFuture;
@@ -19,6 +20,9 @@ public class ServerApplication implements ApplicationRunner{
     }
 
     @Autowired
+    private Node node;
+
+    @Autowired
     private ServiceRouter serviceRouter;
 
     @Autowired
@@ -30,6 +34,7 @@ public class ServerApplication implements ApplicationRunner{
         f.addListener((ChannelFuture future)-> {
             if(future.isSuccess()){
                 log.info("IM 服务已启动,端口号：{}",future.channel().localAddress());
+                node.register();
                 serviceRouter.init();
             }
             else{

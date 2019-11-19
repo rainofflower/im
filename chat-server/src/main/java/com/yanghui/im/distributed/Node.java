@@ -43,7 +43,7 @@ public class Node implements Comparable<Node>, Serializable {
     @Autowired
     private transient CuratorFramework client;
 
-    @PostConstruct
+    //@PostConstruct //改成先启动netty，再注册
     public void register() throws Exception {
         try {
             log.info("节点正在注册到zookeeper...");

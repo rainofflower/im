@@ -1,6 +1,7 @@
 package com.yanghui.im.distributed;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yanghui.im.codec.ProtoBufDecoder;
 import com.yanghui.im.codec.ProtoBufEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -21,6 +22,7 @@ import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 分布式节点之间通信
@@ -46,6 +48,12 @@ public class ServiceRouter {
     private int nodeClientThreads;
 
     private EventLoopGroup eventExecutors;
+
+    @Value("${cluster.client.heartbeat.interval}")
+    private int heartbeatInterval;
+
+    @Value("${cluster.client.retry.maxCount}")
+    private int retryMaxCount;
 
     /**
      * 初始化集群节点连接
@@ -118,6 +126,7 @@ public class ServiceRouter {
         log.info("收到删除的节点 data：{}, path: {}",JSONObject.toJSONString(node), path);
         NodeClient client = serviceMap.get(id);
         if(client != null){
+            client.setRemoved(true);
             client.close();
         }
     }
@@ -155,6 +164,10 @@ public class ServiceRouter {
 
         private EventLoopGroup eventExecutors;
 
+        private volatile boolean removed;
+
+        private final AtomicInteger retryCount = new AtomicInteger(0);
+
         public NodeClient(Node node, EventLoopGroup eventExecutors){
             this.node = node;
             this.eventExecutors = eventExecutors;
@@ -171,8 +184,9 @@ public class ServiceRouter {
                             @Override
                             protected void initChannel(SocketChannel channel) throws Exception {
                                 channel.pipeline()
+                                        .addLast("decoder", new ProtoBufDecoder())
                                         .addLast("encoder", new ProtoBufEncoder())
-                                        .addLast(new HeartBeatNodeHandler());
+                                        .addLast("heartbeat", new HeartBeatNodeHandler(heartbeatInterval));
                             }
                         });
                 log.info("节点 {} 开始连接远程节点：{}",currentNode.getHost(),node.getHost());
@@ -205,12 +219,20 @@ public class ServiceRouter {
                 log.info("{} 连接远程节点 {} 成功",currentNode.getHost(),node.getHost());
             }
             else{
-                log.error("{} 连接 {} 失败!在10s之后准备尝试重连!",currentNode.getHost(),node.getHost());
-                f.channel().eventLoop().schedule(
-                        () -> this.connect(),
-                        10,
-                        TimeUnit.SECONDS
-                );
+                log.error("{} 连接 {} 失败! 已重连 {} 次，最多重连 {} 次",
+                        currentNode.getHost(), node.getHost(), this.retryCount.get(), retryMaxCount);
+                //判断节点是否被移除，节点未移除才尝试重连
+                if(!this.removed && this.retryCount.get() < retryMaxCount){
+                    log.error("在10s之后准备尝试重连 {}!",node.getHost());
+                    f.channel().eventLoop().schedule(
+                            () -> {
+                                this.connect();
+                                this.retryCount.incrementAndGet();
+                            },
+                            10,
+                            TimeUnit.SECONDS
+                    );
+                }
             }
         };
 
@@ -219,7 +241,7 @@ public class ServiceRouter {
          */
         public ChannelFuture close(){
             if(this.channel != null && this.channel.isActive()){
-                return this.channel.closeFuture().addListener(closedListener);
+                return this.channel.closeFuture();
             }
             return null;
         }
