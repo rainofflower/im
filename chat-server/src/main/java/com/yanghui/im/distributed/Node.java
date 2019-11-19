@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,7 +43,7 @@ public class Node implements Comparable<Node>, Serializable {
     @Autowired
     private transient CuratorFramework client;
 
-
+    @PostConstruct
     public void register() throws Exception {
         try {
             log.info("节点正在注册到zookeeper...");

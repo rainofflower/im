@@ -2,7 +2,7 @@ package com.yanghui.im.handler;
 
 import com.yanghui.im.bean.msg.ProtoMsg;
 import com.yanghui.im.concurrent.SimpleThreadPool;
-import com.yanghui.im.server.ServerSession;
+import com.yanghui.im.server.LocalSession;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -44,6 +44,6 @@ public class HeartBeatServerHandler extends IdleStateHandler {
      */
     protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
         log.info("{} 秒内未读取到数据，关闭连接，释放资源");
-        ServerSession.closeSession(ctx);
+        LocalSession.closeSession(ctx);
     }
 }

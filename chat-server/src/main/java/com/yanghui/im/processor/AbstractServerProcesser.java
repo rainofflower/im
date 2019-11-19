@@ -1,16 +1,16 @@
 package com.yanghui.im.processor;
 
-import com.yanghui.im.server.ServerSession;
+import com.yanghui.im.server.LocalSession;
 import io.netty.channel.Channel;
 
 public abstract class AbstractServerProcesser implements ServerProcesser {
     protected String getKey(Channel ch) {
 
-        return ch.attr(ServerSession.KEY_USER_ID).get();
+        return ch.attr(LocalSession.KEY_USER_ID).get();
     }
 
     protected void setKey(Channel ch, String key) {
-        ch.attr(ServerSession.KEY_USER_ID).set(key);
+        ch.attr(LocalSession.KEY_USER_ID).set(key);
     }
 
     protected void checkAuth(Channel ch) throws Exception {

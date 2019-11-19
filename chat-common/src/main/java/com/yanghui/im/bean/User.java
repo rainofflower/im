@@ -13,13 +13,13 @@ public class User {
     String token;
     String nickName = "nickName";
     PLATTYPE platform = PLATTYPE.WINDOWS;
+    private String sessionId;
 
     // windows,mac,android, ios, web , other
     public enum PLATTYPE {
         WINDOWS, MAC, ANDROID, IOS, WEB, OTHER;
-    }
 
-    private String sessionId;
+    }
 
 
     public void setPlatform(int platform) {

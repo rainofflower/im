@@ -1,15 +1,18 @@
 service:
-  host: 192.168.43.117
+  host: 192.168.43.151
   port: 8010
-  netty:
-    boss-threads: 1
-    worker-threads: 24
-  #服务端心跳 空闲检查间隔
-  heartbeat:
-    read-idle-gap: 150
   register:
     rootPath: /distributed-im
     prefix: id-
+  netty:
+    boss-threads: 1
+    worker-threads: 24
+  #服务端心跳 空闲检查间隔, 单位 秒
+  heartbeat:
+    read-idle-gap: 150
+  #session超时时间，单位 分钟
+  session:
+    timeout: 2
 
 cluster:
   client:
@@ -23,7 +26,7 @@ zookeeper:
 spring:
   redis:
     cluster:
-      # 3主 3从 伪集群
+      # 3主 3从 集群
       nodes: 192.168.43.151:7001,192.168.43.151:7002,192.168.43.151:7003,192.168.43.151:7004,192.168.43.151:7005,192.168.43.151:7006
       timeout: 1000
       max-redirects: 3

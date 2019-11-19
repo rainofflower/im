@@ -43,6 +43,8 @@ message MessageRequest {
     string property = 9;
     string from_nick = 10;
     string json = 11;
+    bool redirect = 12; //true表示是其它节点转发的消息，false表示是客户端直接发送的消息
+    string to_session_ids = 13; //redirect为true时，该字段带有sessionId数组（实现快速定位channel）
 }
 
 /*聊天响应*/

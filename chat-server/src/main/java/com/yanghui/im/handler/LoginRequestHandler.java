@@ -4,7 +4,7 @@ import com.yanghui.im.bean.msg.ProtoMsg;
 import com.yanghui.im.concurrent.CallbackExecutor;
 import com.yanghui.im.concurrent.CallbackTask;
 import com.yanghui.im.processor.LoginProcesser;
-import com.yanghui.im.server.ServerSession;
+import com.yanghui.im.server.LocalSession;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -40,14 +40,12 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-
-        ServerSession session = new ServerSession(ctx.channel());
-
+        LocalSession localSession = new LocalSession(ctx.channel());
         //异步任务，处理登录的逻辑
         CallbackExecutor.getInstance().execute(new CallbackTask<Boolean>() {
 
             public Boolean call() throws Exception {
-                boolean r = loginProcesser.action(session, pkg);
+                boolean r = loginProcesser.action(localSession, pkg);
                 return r;
             }
 
@@ -55,17 +53,13 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
             public void onSuccess(Boolean r) {
                 if (r) {
                     ctx.pipeline().remove(LoginRequestHandler.this);
-                    log.info("登录成功:" + session.getUser());
-
                 } else {
-                    ServerSession.closeSession(ctx);
-                    log.info("登录失败:" + session.getUser());
+                    LocalSession.closeSession(ctx);
                 }
             }
             //异步任务异常
             public void onFailure(Throwable t) {
-                ServerSession.closeSession(ctx);
-                log.info("登录失败:" + session.getUser());
+                LocalSession.closeSession(ctx);
             }
         });
     }

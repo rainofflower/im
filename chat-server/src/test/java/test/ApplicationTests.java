@@ -2,14 +2,17 @@ package test;
 
 import com.yanghui.im.ServerApplication;
 import com.yanghui.im.bean.User;
+import com.yanghui.im.server.DistributedSession;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,8 +47,8 @@ public class ApplicationTests {
 //        user.setSex(18);
 //        user.setId(1L);
 //        String userKey = "lalala";
-//        redisTemplate.opsForValue().set(userKey, user);
-//        User newUser = (User) redisTemplate.opsForValue().get(userKey);
+//        redisTemplate.opsForValue().setAttribute(userKey, user);
+//        User newUser = (User) redisTemplate.opsForValue().getAttribute(userKey);
 //        System.out.println("获取缓存中key为" + userKey + "的值为：" + newUser);
     }
 
@@ -188,6 +191,22 @@ public class ApplicationTests {
         }
         latch.await();
         System.out.println(redisTemplate.opsForValue().get(num));
+    }
+
+    public Set<DistributedSession> getSessionsByUserId(String userId) {
+        redisTemplate.opsForSet().add(userId, new DistributedSession("1000",1, userId));
+        redisTemplate.opsForSet().add(userId, new DistributedSession("1001",1, userId));
+        redisTemplate.opsForSet().add(userId, new DistributedSession("1002",3, userId));
+        Set<DistributedSession> sets = redisTemplate.opsForSet().members(userId);
+        if(CollectionUtils.isEmpty(sets)){
+            return null;
+        }
+        return sets;
+//        List<LocalSession> list1 = localSessionMap.values()
+//                .stream()
+//                .filter(s -> s.getUser().getUid().equals(userId))
+//                .collect(Collectors.toList());
+//        return list1;
     }
 
 }

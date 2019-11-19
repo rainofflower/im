@@ -17,7 +17,8 @@ public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
     private Class<T> clazz;
 
     static{
-        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+//        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+        ParserConfig.getGlobalInstance().addAccept("com.yanghui.im");
     }
 
     public FastJson2JsonRedisSerializer(Class<T> clazz) {

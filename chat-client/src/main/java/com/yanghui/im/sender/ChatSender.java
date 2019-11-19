@@ -17,6 +17,8 @@ public class ChatSender extends BaseSender {
         chatMsg.setMsgType(ChatMsg.MSGTYPE.TEXT);
         chatMsg.setTo(touid);
         chatMsg.setMsgId(System.currentTimeMillis());
+        //由客户端直接发送的、非转发的消息
+        chatMsg.setRedirect(false);
         ProtoMsg.Message message =
                 ChatMsgBuilder.buildChatMsg(chatMsg, getUser(), getSession());
 

@@ -2448,6 +2448,36 @@ public final class ProtoMsg {
      */
     com.google.protobuf.ByteString
         getJsonBytes();
+
+    /**
+     * <pre>
+     *true表示是其它节点转发的消息，false表示是客户端直接发送的消息
+     * </pre>
+     *
+     * <code>bool redirect = 12;</code>
+     * @return The redirect.
+     */
+    boolean getRedirect();
+
+    /**
+     * <pre>
+     *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+     * </pre>
+     *
+     * <code>string to_session_ids = 13;</code>
+     * @return The toSessionIds.
+     */
+    java.lang.String getToSessionIds();
+    /**
+     * <pre>
+     *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+     * </pre>
+     *
+     * <code>string to_session_ids = 13;</code>
+     * @return The bytes for toSessionIds.
+     */
+    com.google.protobuf.ByteString
+        getToSessionIdsBytes();
   }
   /**
    * <pre>
@@ -2473,6 +2503,7 @@ public final class ProtoMsg {
       property_ = "";
       fromNick_ = "";
       json_ = "";
+      toSessionIds_ = "";
     }
 
     @java.lang.Override
@@ -2560,6 +2591,17 @@ public final class ProtoMsg {
               java.lang.String s = input.readStringRequireUtf8();
 
               json_ = s;
+              break;
+            }
+            case 96: {
+
+              redirect_ = input.readBool();
+              break;
+            }
+            case 106: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              toSessionIds_ = s;
               break;
             }
             default: {
@@ -2876,6 +2918,64 @@ public final class ProtoMsg {
       }
     }
 
+    public static final int REDIRECT_FIELD_NUMBER = 12;
+    private boolean redirect_;
+    /**
+     * <pre>
+     *true表示是其它节点转发的消息，false表示是客户端直接发送的消息
+     * </pre>
+     *
+     * <code>bool redirect = 12;</code>
+     * @return The redirect.
+     */
+    public boolean getRedirect() {
+      return redirect_;
+    }
+
+    public static final int TO_SESSION_IDS_FIELD_NUMBER = 13;
+    private volatile java.lang.Object toSessionIds_;
+    /**
+     * <pre>
+     *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+     * </pre>
+     *
+     * <code>string to_session_ids = 13;</code>
+     * @return The toSessionIds.
+     */
+    public java.lang.String getToSessionIds() {
+      java.lang.Object ref = toSessionIds_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        toSessionIds_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+     * </pre>
+     *
+     * <code>string to_session_ids = 13;</code>
+     * @return The bytes for toSessionIds.
+     */
+    public com.google.protobuf.ByteString
+        getToSessionIdsBytes() {
+      java.lang.Object ref = toSessionIds_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        toSessionIds_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2920,6 +3020,12 @@ public final class ProtoMsg {
       if (!getJsonBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, json_);
       }
+      if (redirect_ != false) {
+        output.writeBool(12, redirect_);
+      }
+      if (!getToSessionIdsBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, toSessionIds_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2962,6 +3068,13 @@ public final class ProtoMsg {
       if (!getJsonBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, json_);
       }
+      if (redirect_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(12, redirect_);
+      }
+      if (!getToSessionIdsBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, toSessionIds_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2997,6 +3110,10 @@ public final class ProtoMsg {
           .equals(other.getFromNick())) return false;
       if (!getJson()
           .equals(other.getJson())) return false;
+      if (getRedirect()
+          != other.getRedirect()) return false;
+      if (!getToSessionIds()
+          .equals(other.getToSessionIds())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3030,6 +3147,11 @@ public final class ProtoMsg {
       hash = (53 * hash) + getFromNick().hashCode();
       hash = (37 * hash) + JSON_FIELD_NUMBER;
       hash = (53 * hash) + getJson().hashCode();
+      hash = (37 * hash) + REDIRECT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getRedirect());
+      hash = (37 * hash) + TO_SESSION_IDS_FIELD_NUMBER;
+      hash = (53 * hash) + getToSessionIds().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3187,6 +3309,10 @@ public final class ProtoMsg {
 
         json_ = "";
 
+        redirect_ = false;
+
+        toSessionIds_ = "";
+
         return this;
       }
 
@@ -3223,6 +3349,8 @@ public final class ProtoMsg {
         result.property_ = property_;
         result.fromNick_ = fromNick_;
         result.json_ = json_;
+        result.redirect_ = redirect_;
+        result.toSessionIds_ = toSessionIds_;
         onBuilt();
         return result;
       }
@@ -3306,6 +3434,13 @@ public final class ProtoMsg {
         }
         if (!other.getJson().isEmpty()) {
           json_ = other.json_;
+          onChanged();
+        }
+        if (other.getRedirect() != false) {
+          setRedirect(other.getRedirect());
+        }
+        if (!other.getToSessionIds().isEmpty()) {
+          toSessionIds_ = other.toSessionIds_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -3955,6 +4090,144 @@ public final class ProtoMsg {
   checkByteStringIsUtf8(value);
         
         json_ = value;
+        onChanged();
+        return this;
+      }
+
+      private boolean redirect_ ;
+      /**
+       * <pre>
+       *true表示是其它节点转发的消息，false表示是客户端直接发送的消息
+       * </pre>
+       *
+       * <code>bool redirect = 12;</code>
+       * @return The redirect.
+       */
+      public boolean getRedirect() {
+        return redirect_;
+      }
+      /**
+       * <pre>
+       *true表示是其它节点转发的消息，false表示是客户端直接发送的消息
+       * </pre>
+       *
+       * <code>bool redirect = 12;</code>
+       * @param value The redirect to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRedirect(boolean value) {
+        
+        redirect_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *true表示是其它节点转发的消息，false表示是客户端直接发送的消息
+       * </pre>
+       *
+       * <code>bool redirect = 12;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRedirect() {
+        
+        redirect_ = false;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object toSessionIds_ = "";
+      /**
+       * <pre>
+       *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+       * </pre>
+       *
+       * <code>string to_session_ids = 13;</code>
+       * @return The toSessionIds.
+       */
+      public java.lang.String getToSessionIds() {
+        java.lang.Object ref = toSessionIds_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          toSessionIds_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+       * </pre>
+       *
+       * <code>string to_session_ids = 13;</code>
+       * @return The bytes for toSessionIds.
+       */
+      public com.google.protobuf.ByteString
+          getToSessionIdsBytes() {
+        java.lang.Object ref = toSessionIds_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          toSessionIds_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+       * </pre>
+       *
+       * <code>string to_session_ids = 13;</code>
+       * @param value The toSessionIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToSessionIds(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        toSessionIds_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+       * </pre>
+       *
+       * <code>string to_session_ids = 13;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearToSessionIds() {
+        
+        toSessionIds_ = getDefaultInstance().getToSessionIds();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *redirect为true时，该字段带有sessionId数组（实现快速定位channel）
+       * </pre>
+       *
+       * <code>string to_session_ids = 13;</code>
+       * @param value The bytes for toSessionIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToSessionIdsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        toSessionIds_ = value;
         onChanged();
         return this;
       }
@@ -8822,33 +9095,34 @@ public final class ProtoMsg {
       "Id\030\002 \001(\t\022\r\n\005token\030\003 \001(\t\022\020\n\010platform\030\004 \001(" +
       "\r\022\023\n\013app_version\030\005 \001(\t\"K\n\rLoginResponse\022" +
       "\016\n\006result\030\001 \001(\010\022\014\n\004code\030\002 \001(\r\022\014\n\004info\030\003 " +
-      "\001(\t\022\016\n\006expose\030\004 \001(\r\"\253\001\n\016MessageRequest\022\016" +
+      "\001(\t\022\016\n\006expose\030\004 \001(\r\"\325\001\n\016MessageRequest\022\016" +
       "\n\006msg_id\030\001 \001(\004\022\014\n\004from\030\002 \001(\t\022\n\n\002to\030\003 \001(\t" +
       "\022\014\n\004time\030\004 \001(\004\022\020\n\010msg_type\030\005 \001(\r\022\017\n\007cont" +
       "ent\030\006 \001(\t\022\013\n\003url\030\010 \001(\t\022\020\n\010property\030\t \001(\t" +
-      "\022\021\n\tfrom_nick\030\n \001(\t\022\014\n\004json\030\013 \001(\t\"M\n\017Mes" +
-      "sageResponse\022\016\n\006result\030\001 \001(\010\022\014\n\004code\030\002 \001" +
-      "(\r\022\014\n\004info\030\003 \001(\t\022\016\n\006expose\030\004 \001(\r\"E\n\023Mess" +
-      "ageNotification\022\r\n\005no_id\030\001 \001(\004\022\014\n\004json\030\002" +
-      " \001(\t\022\021\n\ttimestamp\030\003 \001(\t\":\n\020MessageHeartB" +
-      "eat\022\013\n\003seq\030\001 \001(\r\022\013\n\003uid\030\002 \001(\t\022\014\n\004json\030\003 " +
-      "\001(\t\"\342\003\n\007Message\022/\n\004type\030\001 \001(\0162!.com.yang" +
-      "hui.im.bean.msg.HeadType\022\020\n\010sequence\030\002 \001" +
-      "(\004\022\022\n\nsession_id\030\003 \001(\t\022;\n\014loginRequest\030\004" +
-      " \001(\0132%.com.yanghui.im.bean.msg.LoginRequ" +
-      "est\022=\n\rloginResponse\030\005 \001(\0132&.com.yanghui" +
-      ".im.bean.msg.LoginResponse\022?\n\016messageReq" +
-      "uest\030\006 \001(\0132\'.com.yanghui.im.bean.msg.Mes" +
-      "sageRequest\022A\n\017messageResponse\030\007 \001(\0132(.c" +
-      "om.yanghui.im.bean.msg.MessageResponse\022B" +
-      "\n\014notification\030\010 \001(\0132,.com.yanghui.im.be" +
-      "an.msg.MessageNotification\022<\n\theartBeat\030" +
-      "\t \001(\0132).com.yanghui.im.bean.msg.MessageH" +
-      "eartBeat*\257\001\n\010HeadType\022\021\n\rLOGIN_REQUEST\020\000" +
-      "\022\022\n\016LOGIN_RESPONSE\020\001\022\022\n\016LOGOUT_REQUEST\020\002" +
-      "\022\023\n\017LOGOUT_RESPONSE\020\003\022\016\n\nHEART_BEAT\020\004\022\023\n" +
-      "\017MESSAGE_REQUEST\020\005\022\024\n\020MESSAGE_RESPONSE\020\006" +
-      "\022\030\n\024MESSAGE_NOTIFICATION\020\007b\006proto3"
+      "\022\021\n\tfrom_nick\030\n \001(\t\022\014\n\004json\030\013 \001(\t\022\020\n\010red" +
+      "irect\030\014 \001(\010\022\026\n\016to_session_ids\030\r \001(\t\"M\n\017M" +
+      "essageResponse\022\016\n\006result\030\001 \001(\010\022\014\n\004code\030\002" +
+      " \001(\r\022\014\n\004info\030\003 \001(\t\022\016\n\006expose\030\004 \001(\r\"E\n\023Me" +
+      "ssageNotification\022\r\n\005no_id\030\001 \001(\004\022\014\n\004json" +
+      "\030\002 \001(\t\022\021\n\ttimestamp\030\003 \001(\t\":\n\020MessageHear" +
+      "tBeat\022\013\n\003seq\030\001 \001(\r\022\013\n\003uid\030\002 \001(\t\022\014\n\004json\030" +
+      "\003 \001(\t\"\342\003\n\007Message\022/\n\004type\030\001 \001(\0162!.com.ya" +
+      "nghui.im.bean.msg.HeadType\022\020\n\010sequence\030\002" +
+      " \001(\004\022\022\n\nsession_id\030\003 \001(\t\022;\n\014loginRequest" +
+      "\030\004 \001(\0132%.com.yanghui.im.bean.msg.LoginRe" +
+      "quest\022=\n\rloginResponse\030\005 \001(\0132&.com.yangh" +
+      "ui.im.bean.msg.LoginResponse\022?\n\016messageR" +
+      "equest\030\006 \001(\0132\'.com.yanghui.im.bean.msg.M" +
+      "essageRequest\022A\n\017messageResponse\030\007 \001(\0132(" +
+      ".com.yanghui.im.bean.msg.MessageResponse" +
+      "\022B\n\014notification\030\010 \001(\0132,.com.yanghui.im." +
+      "bean.msg.MessageNotification\022<\n\theartBea" +
+      "t\030\t \001(\0132).com.yanghui.im.bean.msg.Messag" +
+      "eHeartBeat*\257\001\n\010HeadType\022\021\n\rLOGIN_REQUEST" +
+      "\020\000\022\022\n\016LOGIN_RESPONSE\020\001\022\022\n\016LOGOUT_REQUEST" +
+      "\020\002\022\023\n\017LOGOUT_RESPONSE\020\003\022\016\n\nHEART_BEAT\020\004\022" +
+      "\023\n\017MESSAGE_REQUEST\020\005\022\024\n\020MESSAGE_RESPONSE" +
+      "\020\006\022\030\n\024MESSAGE_NOTIFICATION\020\007b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8871,7 +9145,7 @@ public final class ProtoMsg {
     internal_static_com_yanghui_im_bean_msg_MessageRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_yanghui_im_bean_msg_MessageRequest_descriptor,
-        new java.lang.String[] { "MsgId", "From", "To", "Time", "MsgType", "Content", "Url", "Property", "FromNick", "Json", });
+        new java.lang.String[] { "MsgId", "From", "To", "Time", "MsgType", "Content", "Url", "Property", "FromNick", "Json", "Redirect", "ToSessionIds", });
     internal_static_com_yanghui_im_bean_msg_MessageResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_com_yanghui_im_bean_msg_MessageResponse_fieldAccessorTable = new

@@ -4,8 +4,9 @@ import com.yanghui.im.bean.User;
 import com.yanghui.im.bean.msg.ProtoMsg;
 import com.yanghui.im.constant.ProtoInstant;
 import com.yanghui.im.protoBuilder.LoginResponseBuilder;
-import com.yanghui.im.server.ServerSession;
-import com.yanghui.im.server.SessionMap;
+import com.yanghui.im.server.LocalSession;
+import com.yanghui.im.server.Session;
+import com.yanghui.im.server.SessionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,17 +14,18 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class LoginProcesser extends AbstractServerProcesser {
-    @Autowired
-    LoginResponseBuilder loginResponseBuilder;
 
-    @Override
+    @Autowired
+    private LoginResponseBuilder loginResponseBuilder;
+
+    @Autowired
+    private SessionManager sessionManager;
+
     public ProtoMsg.HeadType type() {
         return ProtoMsg.HeadType.LOGIN_REQUEST;
     }
 
-    @Override
-    public boolean action(ServerSession session,
-                          ProtoMsg.Message proto) {
+    public boolean action(Session session, ProtoMsg.Message proto) {
         // 取出token验证
         ProtoMsg.LoginRequest info = proto.getLoginRequest();
         long seqNo = proto.getSequence();
@@ -40,12 +42,16 @@ public class LoginProcesser extends AbstractServerProcesser {
                     loginResponseBuilder.loginResponse(resultcode, seqNo, "-1");
             //发送登录失败的报文
             session.writeAndFlush(response);
+            log.info("登录失败:" + user);
             return false;
         }
 
-        session.setUser(user);
+        LocalSession localSession = (LocalSession)session;
+        localSession.setManager(sessionManager);
+        localSession.setUser(user);
 
-        session.bind();
+        localSession.bind();
+        sessionManager.addSession(localSession);
 
         //登录成功
         ProtoInstant.ResultCodeEnum resultcode =
@@ -53,15 +59,16 @@ public class LoginProcesser extends AbstractServerProcesser {
         //构造登录成功的报文
         ProtoMsg.Message response =
                 loginResponseBuilder.loginResponse(
-                        resultcode, seqNo, session.getSessionId());
+                        resultcode, seqNo, localSession.getSessionId());
         //发送登录成功的报文
         session.writeAndFlush(response);
+        log.info("登录成功:" + user);
         return true;
     }
 
     private boolean checkUser(User user) {
 
-        if (SessionMap.inst().hasLogin(user)) {
+        if (sessionManager.hasLogin(user)) {
             return false;
         }
 

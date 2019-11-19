@@ -8,14 +8,14 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Data
-@Component
+@Service
 public class ServiceRouter {
 
     private final ConcurrentMap<Long, NodeClient> serviceMap = new ConcurrentHashMap<>();
@@ -122,6 +122,25 @@ public class ServiceRouter {
         }
     }
 
+    /**
+     * 异步将数据发送给指定节点
+     * @param nodeId
+     * @param msg
+     * @return
+     */
+    public Future writeAndFlush(Long nodeId, Object msg){
+        NodeClient nodeClient = serviceMap.get(nodeId);
+        if(nodeClient == null){
+            String error = "节点:id = "+currentNode.getId()+" 与节点:id = "+nodeId+" 的连接异常";
+            log.error(error);
+            DefaultPromise promise = new DefaultPromise(eventExecutors.next());
+            promise.setFailure(new RuntimeException(error));
+            return promise;
+        }else{
+            return nodeClient.writeAndFlush(msg);
+        }
+    }
+
 
     /**
      * 远程节点
@@ -206,8 +225,12 @@ public class ServiceRouter {
         }
 
 
-
-        public ChannelFuture send(Object msg){
+        /**
+         * 异步向集群中的远程节点发送消息
+         * @param msg
+         * @return
+         */
+        public ChannelFuture writeAndFlush(Object msg){
             if(this.channel == null || !this.channel.isActive()){
                 log.error("信息发送失败,连接已关闭，等待重连");
             }
