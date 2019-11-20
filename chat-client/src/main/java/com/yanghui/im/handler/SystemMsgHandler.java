@@ -4,11 +4,13 @@ import com.yanghui.im.bean.msg.ProtoMsg;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @ChannelHandler.Sharable
 @Service
-public class ChatMsgHandler extends ChannelInboundHandlerAdapter {
+@Slf4j
+public class SystemMsgHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 业务逻辑处理
@@ -24,16 +26,15 @@ public class ChatMsgHandler extends ChannelInboundHandlerAdapter {
         //判断类型
         ProtoMsg.Message pkg = (ProtoMsg.Message) msg;
         ProtoMsg.HeadType headType = pkg.getType();
-        if (!headType.equals(ProtoMsg.HeadType.MESSAGE_REQUEST)) {
+        if (!headType.equals(ProtoMsg.HeadType.MESSAGE_NOTIFICATION)) {
             super.channelRead(ctx, msg);
             return;
         }
 
-        ProtoMsg.MessageRequest req = pkg.getMessageRequest();
+        ProtoMsg.MessageNotification req = pkg.getNotification();
         String content = req.getContent();
-        String userId = req.getFrom();
 
-        System.out.println(" 收到消息 from uid:" + userId + " -> " + content);
+        System.out.println(" 收到通知: " + content);
     }
 
 

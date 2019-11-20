@@ -6,6 +6,7 @@ import com.yanghui.im.codec.ProtoBufEncoder;
 import com.yanghui.im.handler.ChatMsgHandler;
 import com.yanghui.im.handler.ExceptionHandler;
 import com.yanghui.im.handler.LoginResponceHandler;
+import com.yanghui.im.handler.SystemMsgHandler;
 import com.yanghui.im.sender.ChatSender;
 import com.yanghui.im.sender.LoginSender;
 import io.netty.bootstrap.Bootstrap;
@@ -39,6 +40,9 @@ public class NettyClient {
 
     @Autowired
     private LoginResponceHandler loginResponceHandler;
+
+    @Autowired
+    private SystemMsgHandler systemMsgHandler;
 
 
     @Autowired
@@ -92,6 +96,7 @@ public class NettyClient {
                             ch.pipeline().addLast("encoder", new ProtoBufEncoder());
                             ch.pipeline().addLast(loginResponceHandler);
                             ch.pipeline().addLast(chatMsgHandler);
+                            ch.pipeline().addLast(systemMsgHandler);
                             ch.pipeline().addLast(exceptionHandler);
                         }
                     }

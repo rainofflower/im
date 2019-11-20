@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 //@ChannelHandler.Sharable
-//@Service("HeartBeatClientHandler")
+//@Service
 public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
     /**
      * 心跳的时间间隔，单位为s
@@ -51,7 +51,7 @@ public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
         ctx.executor().schedule(() -> {
 
             if (ctx.channel().isActive()) {
-                log.info(" 发送 HEART_BEAT  消息 to server");
+                //log.info(" 发送 HEART_BEAT  消息 to server");
                 ctx.writeAndFlush(heartbeatMsg);
 
                 //递归调用，发送下一次的心跳
@@ -76,13 +76,10 @@ public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
         ProtoMsg.Message pkg = (ProtoMsg.Message) msg;
         ProtoMsg.HeadType headType = pkg.getType();
         if (headType.equals(ProtoMsg.HeadType.HEART_BEAT)) {
-
-            log.info(" 收到回写的 HEART_BEAT  消息 from server");
-
+            //log.info(" 收到回写的 HEART_BEAT  消息 from server");
             return;
         } else {
             super.channelRead(ctx, msg);
-
         }
 
     }
