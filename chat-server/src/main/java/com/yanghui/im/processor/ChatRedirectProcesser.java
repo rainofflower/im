@@ -86,7 +86,15 @@ public class ChatRedirectProcesser extends AbstractServerProcesser {
                         //集群中的其它节点
                         List<String> sessionList = new LinkedList<>();
                         for(DistributedSession s : sessions){
-                            sessionList.add(s.getSessionId());
+                            String sessionId = s.getSessionId();
+                            //检查集群其它节点中的session是否过期
+                            if(sessionManager.valid(sessionId)){
+                                //注意，即使未过期，消息也可能不可达，因为远程节点可能挂了
+                                sessionList.add(sessionId);
+                            }else{
+                                //如果过期，帮忙清除缓存数据
+                                sessionManager.removeSession(s, true);
+                            }
                         }
                         ProtoMsg.Message redirectMsgRequest = ChatMsgBuilder.buildRedirectMsgRequest(proto, sessionList);
                         serviceRouter.writeAndFlush(nodeId, redirectMsgRequest);
