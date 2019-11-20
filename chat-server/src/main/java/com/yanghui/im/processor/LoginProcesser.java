@@ -61,7 +61,7 @@ public class LoginProcesser extends AbstractServerProcesser {
                 loginResponseBuilder.loginResponse(
                         resultcode, seqNo, localSession.getSessionId());
         //发送登录成功的报文
-        session.writeAndFlush(response);
+        localSession.writeAndFlush(response);
         log.info("登录成功:" + user);
         return true;
     }

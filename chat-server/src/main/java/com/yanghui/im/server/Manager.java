@@ -6,5 +6,5 @@ public interface Manager {
 
     Session getSession(String sessionId);
 
-    boolean isValid(String sessionId);
+    boolean valid(String sessionId);
 }

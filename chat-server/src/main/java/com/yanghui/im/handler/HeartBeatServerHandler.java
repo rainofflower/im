@@ -43,7 +43,7 @@ public class HeartBeatServerHandler extends IdleStateHandler {
      * 限定时间内未收到数据会回调该方法
      */
     protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
-        log.info("{} 秒内未读取到数据，关闭连接，释放资源");
+        log.info("{} 秒内未读取到心跳数据，关闭连接，释放资源",super.getReaderIdleTimeInMillis()/1000);
         LocalSession.closeSession(ctx);
     }
 }

@@ -37,12 +37,15 @@ public class LocalSession extends AbstractSession{
 
     @Override
     public ChannelFuture writeAndFlush(Object msg) {
-        return channel.writeAndFlush(msg);
+        return this.channel.writeAndFlush(msg);
     }
 
     //关闭连接
     public ChannelFuture close() {
-        return channel.close();
+        if(this.channel != null && this.channel.isOpen()){
+            return this.channel.close();
+        }
+        return null;
     }
 
     //反向导航

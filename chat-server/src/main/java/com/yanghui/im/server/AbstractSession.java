@@ -20,7 +20,7 @@ public abstract class AbstractSession implements Session {
     /**
      * session管理器
      */
-    private transient Manager sessionManager;
+    private transient Manager manager;
 
     public String getSessionId(){
         return sessionId;
@@ -31,20 +31,20 @@ public abstract class AbstractSession implements Session {
     }
 
     public void setManager(Manager sessionManager){
-        this.sessionManager = sessionManager;
+        this.manager = sessionManager;
     }
 
     public Manager getManager(){
-        return sessionManager;
+        return manager;
     }
 
     @Override
-    public boolean isValid() throws RuntimeException{
-        if(sessionManager == null){
-            log.error("session管理器未设置，检查session是否正常失败");
+    public boolean valid() throws RuntimeException{
+        if(manager == null){
+            log.error("session管理器未设置，检查session是否正常");
             throw new RuntimeException("session管理器未设置！");
         }
-        return sessionManager.isValid(sessionId);
+        return manager.valid(sessionId);
     }
 
     public void setAttribute(String key, Object value){

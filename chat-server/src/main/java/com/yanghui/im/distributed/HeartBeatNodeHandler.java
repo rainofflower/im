@@ -1,8 +1,11 @@
 package com.yanghui.im.distributed;
 
 import com.yanghui.im.bean.msg.ProtoMsg;
+import com.yanghui.im.server.LocalSession;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -11,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * 心跳检测 - 分布式各节点之间定时发送心跳包
  */
 @Slf4j
-public class HeartBeatNodeHandler extends ChannelInboundHandlerAdapter {
+public class HeartBeatNodeHandler extends IdleStateHandler {
     /**
      * 心跳的时间间隔，单位为s
      * 一般要比服务端的空闲检测时间的一半还短一些，可以直接定义为空闲检测时间间隔的1/3
@@ -20,9 +23,8 @@ public class HeartBeatNodeHandler extends ChannelInboundHandlerAdapter {
 
     private int heartbeatInterval = DEFAULT_HEARTBEAT_INTERVAL;
 
-    public HeartBeatNodeHandler(){}
-
-    public HeartBeatNodeHandler(int heartbeatInterval){
+    public HeartBeatNodeHandler(int readIdleGap, int heartbeatInterval){
+        super(readIdleGap, 0 ,0 , TimeUnit.SECONDS);
         this.heartbeatInterval = heartbeatInterval;
     }
 
@@ -53,7 +55,7 @@ public class HeartBeatNodeHandler extends ChannelInboundHandlerAdapter {
         ctx.executor().schedule(() -> {
 
             if (ctx.channel().isActive()) {
-                log.info(" 集群节点 发送 HEART_BEAT  消息 到其它节点");
+                log.info("[集群节点间通信] 节点 发送 HEART_BEAT  消息 到其它节点");
                 ctx.writeAndFlush(heartbeatMsg);
 
                 //递归调用，发送下一次的心跳
@@ -64,7 +66,7 @@ public class HeartBeatNodeHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * 接受到服务器的心跳回写
+     * 接受集群其它节点的心跳回写
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -78,15 +80,17 @@ public class HeartBeatNodeHandler extends ChannelInboundHandlerAdapter {
         ProtoMsg.Message pkg = (ProtoMsg.Message) msg;
         ProtoMsg.HeadType headType = pkg.getType();
         if (headType.equals(ProtoMsg.HeadType.HEART_BEAT)) {
-
-            log.info(" 节点收到回写的 HEART_BEAT  消息 从其它节点");
-
-            return;
-        } else {
-            super.channelRead(ctx, msg);
-
+            log.info("[集群节点间通信] 节点收到回写的 HEART_BEAT");
         }
+        super.channelRead(ctx, msg);
+    }
 
+    /**
+     * 限定时间内未收到数据会回调该方法
+     */
+    protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
+        log.info("[集群节点间通信] {} 秒内未读取到心跳数据，关闭与其它节点的连接，释放资源",super.getReaderIdleTimeInMillis()/1000);
+        ctx.close();
     }
 
 }

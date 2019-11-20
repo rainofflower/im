@@ -49,6 +49,9 @@ public class ServiceRouter {
 
     private EventLoopGroup eventExecutors;
 
+    @Value("${cluster.client.heartbeat.read-idle-gap}")
+    private int readIdleGap;
+
     @Value("${cluster.client.heartbeat.interval}")
     private int heartbeatInterval;
 
@@ -186,7 +189,7 @@ public class ServiceRouter {
                                 channel.pipeline()
                                         .addLast("decoder", new ProtoBufDecoder())
                                         .addLast("encoder", new ProtoBufEncoder())
-                                        .addLast("heartbeat", new HeartBeatNodeHandler(heartbeatInterval));
+                                        .addLast("heartbeat", new HeartBeatNodeHandler(readIdleGap,heartbeatInterval));
                             }
                         });
                 log.info("节点 {} 开始连接远程节点：{}",currentNode.getHost(),node.getHost());

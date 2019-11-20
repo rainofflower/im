@@ -52,7 +52,32 @@ public class SessionManager implements Manager{
         redisTemplate.opsForSet().add(uid, distributedSession);
         log.info("用户登录:id= " + uid
                 + "   在线总数: " + localSessionMap.size());
+        //监听通道正常、异常关闭，清除集群中的缓存
+        s.getChannel().closeFuture().addListener((ChannelFuture future)->{
+            if(future.isSuccess()){
+                log.info("用户断开连接");
+            }else{
+                log.error("用户session关闭异常，error:{}",future.cause());
+            }
+            this.removeSession(s, false);
+        });
 
+    }
+
+    /**
+     * 重置session过期时间
+     * @param s
+     */
+    public void refreshSession(Session s) {
+        String sessionId = s.getSessionId();
+        if(s instanceof LocalSession){
+            String uid = ((LocalSession)s).getUser().getUid();
+            redisTemplate.opsForValue().set(sessionId,
+                    new DistributedSession(sessionId, node.getId(), uid),
+                    sessionTimeOut, TimeUnit.MINUTES);
+        }else{
+            redisTemplate.opsForValue().set(sessionId, s, sessionTimeOut, TimeUnit.MINUTES);
+        }
     }
 
     /**
@@ -85,7 +110,7 @@ public class SessionManager implements Manager{
     /**
      * session是否有效
      */
-    public boolean isValid(String sessionId) {
+    public boolean valid(String sessionId) {
         return redisTemplate.opsForValue().get(sessionId) == null ? false : true;
     }
 
@@ -101,11 +126,6 @@ public class SessionManager implements Manager{
             }
         }
         return sets;
-//        List<LocalSession> list1 = localSessionMap.values()
-//                .stream()
-//                .filter(s -> s.getUser().getUid().equals(userId))
-//                .collect(Collectors.toList());
-//        return list1;
     }
 
     /**
@@ -119,12 +139,7 @@ public class SessionManager implements Manager{
             if (localSessionMap.containsKey(sessionId)) {
                 //本地session
                 LocalSession s = localSessionMap.get(sessionId);
-                ChannelFuture f = s.close();
-                f.addListener((ChannelFuture future) -> {
-                    if (!future.isSuccess()) {
-                        log.error("本地channel关闭失败");
-                    }
-                });
+                s.close();
                 localSessionMap.remove(sessionId);
                 log.info("用户下线:id= " + s.getUser().getUid()
                         + "   在线总数: " + localSessionMap.size());
@@ -136,10 +151,11 @@ public class SessionManager implements Manager{
         }finally {
             //以下为移除缓存中set里的session
             if(session instanceof LocalSession){
-                redisTemplate.opsForSet().remove(new DistributedSession(sessionId,node.getId(),((LocalSession) session).getUser().getUid()));
+                String userId = ((LocalSession) session).getUser().getUid();
+                redisTemplate.opsForSet().remove(userId, new DistributedSession(sessionId,node.getId(),userId));
             }
             if(session instanceof DistributedSession){
-                redisTemplate.opsForSet().remove(session);
+                redisTemplate.opsForSet().remove(((DistributedSession) session).getUserId(), session);
             }
         }
     }

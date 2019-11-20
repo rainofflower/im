@@ -59,6 +59,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
             }
             //异步任务异常
             public void onFailure(Throwable t) {
+                log.error("登录失败,error:{}",t);
                 LocalSession.closeSession(ctx);
             }
         });

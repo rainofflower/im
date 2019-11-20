@@ -14,7 +14,7 @@ public interface Session {
 
     void setSessionId(String id);
 
-    boolean isValid();
+    boolean valid(); // bug 使用isValid() fastjson解析报错
 
     Future close();
 }

@@ -10,6 +10,13 @@ import java.nio.charset.Charset;
 
 /**
  * fastjson版redis序列化、反序列化
+ *
+ * 注意：FastJson最新版1.2.62在windows环境下使用发现有bug，
+ * 在linux下ParserConfig实例也需要调用addAccept(序列化的类所在包)，
+ * 否则报错（即直接使用GenericFastJsonRedisSerializer也会报错）
+ *
+ * 详见：
+ * https://github.com/alibaba/fastjson/issues/2780
  */
 public class FastJson2JsonRedisSerializer<T> implements RedisSerializer<T> {
 

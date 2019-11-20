@@ -1,12 +1,11 @@
 package com.yanghui.im.processor;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yanghui.im.bean.ChatMsg;
 import com.yanghui.im.bean.msg.ProtoMsg;
 import com.yanghui.im.distributed.ServiceRouter;
 import com.yanghui.im.protoBuilder.ChatMsgBuilder;
+import com.yanghui.im.protoBuilder.SystemMsgBuilder;
 import com.yanghui.im.server.DistributedSession;
-import com.yanghui.im.server.LocalSession;
 import com.yanghui.im.server.Session;
 import com.yanghui.im.server.SessionManager;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +39,7 @@ public class ChatRedirectProcesser extends AbstractServerProcesser {
         log.info("chatMsg 来源["+(msg.getRedirect() ? "其它节点转发" : "客户端直接发送")+"] from="
                 + msg.getFrom()
                 + " , to=" + msg.getTo()
-                + " , content=" + msg.getContent());
+                + " , content=" + msg.getContent() + " , 发送源sessionId=" + proto.getSessionId());
         // int platform = msg.getPlatform();
         if(msg.getRedirect()){
             //其它节点转发过来的数据，直接去localSessionMap中查询session并发送数据给客户端
@@ -52,11 +51,16 @@ public class ChatRedirectProcesser extends AbstractServerProcesser {
                 //用户刚刚才发送消息过来，这会儿连接被移除了，可能是session短期内就超时或其它异常
                 return false;
             }
-            if(!sessionManager.isValid(localSession.getSessionId())){
+            if(!sessionManager.valid(localSession.getSessionId())){
                 //发送消息的用户session过期
+                String info = "用户session过期，sessionId: "+proto.getSessionId()+"， userId: "+msg.getFrom();
+                log.info(info);
+                localSession.writeAndFlush(SystemMsgBuilder.buildMsgRequest(proto, info));
                 sessionManager.removeSession(localSession, true);
                 return false;
             }
+            //在session存活期间用户有发送消息则进行session续期
+            sessionManager.refreshSession(localSession);
             /*
              * 客户端发送的数据，需要根据接收方的userId去redis集群中获取所有的分布式session，
              * 然后根据nodeId分组，将数据发送给对应的node（如果某些session刚好就是当前node,则直接走上面那个分支的逻辑）
@@ -105,7 +109,7 @@ public class ChatRedirectProcesser extends AbstractServerProcesser {
                 //接收方离线
                 log.info("[" + sessionId + "] 不在线，发送失败!");
             }else{
-                if(sessionManager.isValid(localSession.getSessionId())){
+                if(sessionManager.valid(localSession.getSessionId())){
                     //session有效
                     localSession.writeAndFlush(proto);
                 }else{

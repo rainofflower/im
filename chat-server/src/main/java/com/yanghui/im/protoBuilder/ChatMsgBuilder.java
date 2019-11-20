@@ -30,8 +30,7 @@ public class ChatMsgBuilder {
                         .setJson(mq.getJson())
                         //转发消息
                         .setRedirect(true)
-                        .setToSessionIds(JSONObject.toJSONString(sessionIds))
-                        .setContent(mq.getContent());
+                        .setToSessionIds(JSONObject.toJSONString(sessionIds));
         mb.setMessageRequest(rb.build());
         return mb.build();
     }

@@ -5096,6 +5096,18 @@ public final class ProtoMsg {
      */
     com.google.protobuf.ByteString
         getTimestampBytes();
+
+    /**
+     * <code>string content = 4;</code>
+     * @return The content.
+     */
+    java.lang.String getContent();
+    /**
+     * <code>string content = 4;</code>
+     * @return The bytes for content.
+     */
+    com.google.protobuf.ByteString
+        getContentBytes();
   }
   /**
    * <pre>
@@ -5116,6 +5128,7 @@ public final class ProtoMsg {
     private MessageNotification() {
       json_ = "";
       timestamp_ = "";
+      content_ = "";
     }
 
     @java.lang.Override
@@ -5163,6 +5176,12 @@ public final class ProtoMsg {
               java.lang.String s = input.readStringRequireUtf8();
 
               timestamp_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              content_ = s;
               break;
             }
             default: {
@@ -5279,6 +5298,42 @@ public final class ProtoMsg {
       }
     }
 
+    public static final int CONTENT_FIELD_NUMBER = 4;
+    private volatile java.lang.Object content_;
+    /**
+     * <code>string content = 4;</code>
+     * @return The content.
+     */
+    public java.lang.String getContent() {
+      java.lang.Object ref = content_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        content_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string content = 4;</code>
+     * @return The bytes for content.
+     */
+    public com.google.protobuf.ByteString
+        getContentBytes() {
+      java.lang.Object ref = content_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        content_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -5302,6 +5357,9 @@ public final class ProtoMsg {
       if (!getTimestampBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, timestamp_);
       }
+      if (!getContentBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, content_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -5320,6 +5378,9 @@ public final class ProtoMsg {
       }
       if (!getTimestampBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, timestamp_);
+      }
+      if (!getContentBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, content_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -5342,6 +5403,8 @@ public final class ProtoMsg {
           .equals(other.getJson())) return false;
       if (!getTimestamp()
           .equals(other.getTimestamp())) return false;
+      if (!getContent()
+          .equals(other.getContent())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5360,6 +5423,8 @@ public final class ProtoMsg {
       hash = (53 * hash) + getJson().hashCode();
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
       hash = (53 * hash) + getTimestamp().hashCode();
+      hash = (37 * hash) + CONTENT_FIELD_NUMBER;
+      hash = (53 * hash) + getContent().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5503,6 +5568,8 @@ public final class ProtoMsg {
 
         timestamp_ = "";
 
+        content_ = "";
+
         return this;
       }
 
@@ -5532,6 +5599,7 @@ public final class ProtoMsg {
         result.noId_ = noId_;
         result.json_ = json_;
         result.timestamp_ = timestamp_;
+        result.content_ = content_;
         onBuilt();
         return result;
       }
@@ -5589,6 +5657,10 @@ public final class ProtoMsg {
         }
         if (!other.getTimestamp().isEmpty()) {
           timestamp_ = other.timestamp_;
+          onChanged();
+        }
+        if (!other.getContent().isEmpty()) {
+          content_ = other.content_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -5798,6 +5870,82 @@ public final class ProtoMsg {
   checkByteStringIsUtf8(value);
         
         timestamp_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object content_ = "";
+      /**
+       * <code>string content = 4;</code>
+       * @return The content.
+       */
+      public java.lang.String getContent() {
+        java.lang.Object ref = content_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          content_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string content = 4;</code>
+       * @return The bytes for content.
+       */
+      public com.google.protobuf.ByteString
+          getContentBytes() {
+        java.lang.Object ref = content_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          content_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string content = 4;</code>
+       * @param value The content to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContent(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        content_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string content = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearContent() {
+        
+        content_ = getDefaultInstance().getContent();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string content = 4;</code>
+       * @param value The bytes for content to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContentBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        content_ = value;
         onChanged();
         return this;
       }
@@ -9102,27 +9250,28 @@ public final class ProtoMsg {
       "\022\021\n\tfrom_nick\030\n \001(\t\022\014\n\004json\030\013 \001(\t\022\020\n\010red" +
       "irect\030\014 \001(\010\022\026\n\016to_session_ids\030\r \001(\t\"M\n\017M" +
       "essageResponse\022\016\n\006result\030\001 \001(\010\022\014\n\004code\030\002" +
-      " \001(\r\022\014\n\004info\030\003 \001(\t\022\016\n\006expose\030\004 \001(\r\"E\n\023Me" +
+      " \001(\r\022\014\n\004info\030\003 \001(\t\022\016\n\006expose\030\004 \001(\r\"V\n\023Me" +
       "ssageNotification\022\r\n\005no_id\030\001 \001(\004\022\014\n\004json" +
-      "\030\002 \001(\t\022\021\n\ttimestamp\030\003 \001(\t\":\n\020MessageHear" +
-      "tBeat\022\013\n\003seq\030\001 \001(\r\022\013\n\003uid\030\002 \001(\t\022\014\n\004json\030" +
-      "\003 \001(\t\"\342\003\n\007Message\022/\n\004type\030\001 \001(\0162!.com.ya" +
-      "nghui.im.bean.msg.HeadType\022\020\n\010sequence\030\002" +
-      " \001(\004\022\022\n\nsession_id\030\003 \001(\t\022;\n\014loginRequest" +
-      "\030\004 \001(\0132%.com.yanghui.im.bean.msg.LoginRe" +
-      "quest\022=\n\rloginResponse\030\005 \001(\0132&.com.yangh" +
-      "ui.im.bean.msg.LoginResponse\022?\n\016messageR" +
-      "equest\030\006 \001(\0132\'.com.yanghui.im.bean.msg.M" +
-      "essageRequest\022A\n\017messageResponse\030\007 \001(\0132(" +
-      ".com.yanghui.im.bean.msg.MessageResponse" +
-      "\022B\n\014notification\030\010 \001(\0132,.com.yanghui.im." +
-      "bean.msg.MessageNotification\022<\n\theartBea" +
-      "t\030\t \001(\0132).com.yanghui.im.bean.msg.Messag" +
-      "eHeartBeat*\257\001\n\010HeadType\022\021\n\rLOGIN_REQUEST" +
-      "\020\000\022\022\n\016LOGIN_RESPONSE\020\001\022\022\n\016LOGOUT_REQUEST" +
-      "\020\002\022\023\n\017LOGOUT_RESPONSE\020\003\022\016\n\nHEART_BEAT\020\004\022" +
-      "\023\n\017MESSAGE_REQUEST\020\005\022\024\n\020MESSAGE_RESPONSE" +
-      "\020\006\022\030\n\024MESSAGE_NOTIFICATION\020\007b\006proto3"
+      "\030\002 \001(\t\022\021\n\ttimestamp\030\003 \001(\t\022\017\n\007content\030\004 \001" +
+      "(\t\":\n\020MessageHeartBeat\022\013\n\003seq\030\001 \001(\r\022\013\n\003u" +
+      "id\030\002 \001(\t\022\014\n\004json\030\003 \001(\t\"\342\003\n\007Message\022/\n\004ty" +
+      "pe\030\001 \001(\0162!.com.yanghui.im.bean.msg.HeadT" +
+      "ype\022\020\n\010sequence\030\002 \001(\004\022\022\n\nsession_id\030\003 \001(" +
+      "\t\022;\n\014loginRequest\030\004 \001(\0132%.com.yanghui.im" +
+      ".bean.msg.LoginRequest\022=\n\rloginResponse\030" +
+      "\005 \001(\0132&.com.yanghui.im.bean.msg.LoginRes" +
+      "ponse\022?\n\016messageRequest\030\006 \001(\0132\'.com.yang" +
+      "hui.im.bean.msg.MessageRequest\022A\n\017messag" +
+      "eResponse\030\007 \001(\0132(.com.yanghui.im.bean.ms" +
+      "g.MessageResponse\022B\n\014notification\030\010 \001(\0132" +
+      ",.com.yanghui.im.bean.msg.MessageNotific" +
+      "ation\022<\n\theartBeat\030\t \001(\0132).com.yanghui.i" +
+      "m.bean.msg.MessageHeartBeat*\257\001\n\010HeadType" +
+      "\022\021\n\rLOGIN_REQUEST\020\000\022\022\n\016LOGIN_RESPONSE\020\001\022" +
+      "\022\n\016LOGOUT_REQUEST\020\002\022\023\n\017LOGOUT_RESPONSE\020\003" +
+      "\022\016\n\nHEART_BEAT\020\004\022\023\n\017MESSAGE_REQUEST\020\005\022\024\n" +
+      "\020MESSAGE_RESPONSE\020\006\022\030\n\024MESSAGE_NOTIFICAT" +
+      "ION\020\007b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9157,7 +9306,7 @@ public final class ProtoMsg {
     internal_static_com_yanghui_im_bean_msg_MessageNotification_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_yanghui_im_bean_msg_MessageNotification_descriptor,
-        new java.lang.String[] { "NoId", "Json", "Timestamp", });
+        new java.lang.String[] { "NoId", "Json", "Timestamp", "Content", });
     internal_static_com_yanghui_im_bean_msg_MessageHeartBeat_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_com_yanghui_im_bean_msg_MessageHeartBeat_fieldAccessorTable = new
