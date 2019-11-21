@@ -96,8 +96,10 @@ public class ChatRedirectProcesser extends AbstractServerProcesser {
                                 sessionManager.removeSession(s, true);
                             }
                         }
-                        ProtoMsg.Message redirectMsgRequest = ChatMsgBuilder.buildRedirectMsgRequest(proto, sessionList);
-                        serviceRouter.writeAndFlush(nodeId, redirectMsgRequest);
+                        if(!CollectionUtils.isEmpty(sessionList)){
+                            ProtoMsg.Message redirectMsgRequest = ChatMsgBuilder.buildRedirectMsgRequest(proto, sessionList);
+                            serviceRouter.writeAndFlush(nodeId, redirectMsgRequest);
+                        }
                     }
                 }
             }

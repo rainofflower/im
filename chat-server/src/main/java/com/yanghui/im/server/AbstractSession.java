@@ -15,7 +15,7 @@ public abstract class AbstractSession implements Session {
     /**
      * session中存储的session 变量属性值
      */
-    private transient ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<>();
+    private final transient ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<>();
 
     /**
      * session管理器
